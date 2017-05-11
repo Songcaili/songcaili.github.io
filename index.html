@@ -1,0 +1,87 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>SongYiTing</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">SongYiTing</h1><a id="logo" href="/.">SongYiTing</a><p class="description"></p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 主页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title"><a href="/2017/05/11/自定义手势/">自定义手势</a></h1><div class="post-meta">2017-05-11</div><a data-thread-key="2017/05/11/自定义手势/" href="/2017/05/11/自定义手势/#comments" class="ds-thread-count"></a><div class="post-content"><p>如果我们想自定义一个手势，需要:</p>
+<ul>
+<li>继承UIGestureRecognizer,包含头文件UIKit/UIGestureRecognizerSubclass.h</li>
+<li>捕获触摸事件，重写touchesBegan… touchesMoved… touchesEnded… touchesCancelled…一些列方法。通过算法识别手势，设置手势的状态UIGestureRecognizerState。</li></div><p class="readmore"><a href="/2017/05/11/自定义手势/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2017/05/08/iOS设计模式之工厂方法/">iOS设计模式之工厂方法</a></h1><div class="post-meta">2017-05-08</div><a data-thread-key="2017/05/08/iOS设计模式之工厂方法/" href="/2017/05/08/iOS设计模式之工厂方法/#comments" class="ds-thread-count"></a><div class="post-content"><p>工厂方法模式：定义创建对象的接口，让子类决定实例化哪一个类。工厂方法使得一个类的实例化延迟到其子类。<br>工厂方法也称为虚构造器。</p></div><p class="readmore"><a href="/2017/05/08/iOS设计模式之工厂方法/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2017/05/08/iOS设计模式之单例/">iOS设计模式之单例</a></h1><div class="post-meta">2017-05-08</div><a data-thread-key="2017/05/08/iOS设计模式之单例/" href="/2017/05/08/iOS设计模式之单例/#comments" class="ds-thread-count"></a><div class="post-content"><p>在iOS中实现一个单例:<br><figure class="highlight mm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Singleton</span> : <span class="title">NSObject</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Singleton</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> Singleton *_sharedSingleton = <span class="literal">nil</span>;</span><br><span class="line"></span><br><span class="line">+ (Singleton *)shareSigleton&#123;</span><br><span class="line">    <span class="keyword">@synchronized</span> (<span class="keyword">self</span>) &#123;  <span class="comment">//互斥锁 将self作为信号量 实现线程安全</span></span><br><span class="line">        <span class="keyword">if</span> (_sharedSingleton == <span class="literal">nil</span>) &#123;</span><br><span class="line">            _sharedSingleton = [[[<span class="keyword">self</span> class] alloc] init];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> _sharedSingleton;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure></p></div><p class="readmore"><a href="/2017/05/08/iOS设计模式之单例/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2017/05/08/雨巷/">雨巷</a></h1><div class="post-meta">2017-05-08</div><a data-thread-key="2017/05/08/雨巷/" href="/2017/05/08/雨巷/#comments" class="ds-thread-count"></a><div class="post-content"><p>(戴望舒)</p>
+<p>撑着油纸伞，独自</p>
+<p>彷徨在悠长，悠长</p>
+<p>又寂寥的雨巷，</p>
+<p>我希望逢着</p></div><p class="readmore"><a href="/2017/05/08/雨巷/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2017/03/29/iOS屏幕分辨率问题/">iOS屏幕分辨率问题</a></h1><div class="post-meta">2017-03-29</div><a data-thread-key="2017/03/29/iOS屏幕分辨率问题/" href="/2017/03/29/iOS屏幕分辨率问题/#comments" class="ds-thread-count"></a><div class="post-content"><table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:left">屏幕尺寸(inch)</th>
+<th style="text-align:left">点(pt)</th>
+<th style="text-align:left">Reader</th>
+<th style="text-align:left">分辨率(px)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">iPhone 3GS</td>
+<td style="text-align:left">3.5英寸</td>
+<td style="text-align:left">320*480</td>
+<td style="text-align:left">@1x</td>
+<td style="text-align:left">320*480</td>
+</tr>
+<tr>
+<td style="text-align:center">iPhone 4/4s</td>
+<td style="text-align:left">3.5英寸</td>
+<td style="text-align:left">320*480</td>
+<td style="text-align:left">@2x</td>
+<td style="text-align:left">640*960</td>
+</tr>
+<tr>
+<td style="text-align:center">iPhone 5/5s/5c</td>
+<td style="text-align:left">4.0英寸</td>
+<td style="text-align:left">320*568</td>
+<td style="text-align:left">@2x</td>
+<td style="text-align:left">640*1136</td>
+</tr>
+<tr>
+<td style="text-align:center">iPhone 6(s)</td>
+<td style="text-align:left">4.7英寸</td>
+<td style="text-align:left">375*667</td>
+<td style="text-align:left">@2x</td>
+<td style="text-align:left">750*1334</td>
+</tr>
+<tr>
+<td style="text-align:center">iPhone 6(s) plus</td>
+<td style="text-align:left">5.5英寸</td>
+<td style="text-align:left">414*736</td>
+<td style="text-align:left">@3x</td>
+<td style="text-align:left">1242*2208</td>
+</tr>
+</tbody>
+</table></div><p class="readmore"><a href="/2017/03/29/iOS屏幕分辨率问题/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2017/03/29/错误/">错误</a></h1><div class="post-meta">2017-03-29</div><a data-thread-key="2017/03/29/错误/" href="/2017/03/29/错误/#comments" class="ds-thread-count"></a><div class="post-content"><p>(郑愁予)</p>
+<p>我打江南走过</p>
+<p>那等在季节里的容颜如莲花的开落</p>
+<p>东风不来，三月的柳絮不飞</p>
+<p>你的心如小小的寂寞的城</p></div><p class="readmore"><a href="/2017/03/29/错误/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2017/03/29/OpenCV基础篇/">OpenCV基础篇</a></h1><div class="post-meta">2017-03-29</div><a data-thread-key="2017/03/29/OpenCV基础篇/" href="/2017/03/29/OpenCV基础篇/#comments" class="ds-thread-count"></a><div class="post-content"><p>灰度图用2纬矩阵表示，彩色图像用3纬矩阵表示<br>无符号8位整数(CV_8U)表示像素亮度<br>在OpenCV中，RGB图像的通道顺序为BGR<br>Mat类 : 可以自动管理内存，图像类，也是一个矩阵类<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mat M(3,2,CV_8UC3,Scalar(0,0,255));</span><br></pre></td></tr></table></figure></p></div><p class="readmore"><a href="/2017/03/29/OpenCV基础篇/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2017/03/27/我和小鸟和铃铛/">我和小鸟和铃铛</a></h1><div class="post-meta">2017-03-27</div><a data-thread-key="2017/03/27/我和小鸟和铃铛/" href="/2017/03/27/我和小鸟和铃铛/#comments" class="ds-thread-count"></a><div class="post-content"><p>(金子美玲)</p>
+<p>我伸展双臂</p>
+<p>也不能在天空飞翔</p>
+<p>会飞的小鸟却不能像我</p>
+<p>在地上快快的奔跑</p></div><p class="readmore"><a href="/2017/03/27/我和小鸟和铃铛/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2016/10/12/Grand-Central-Dispatch-GCD-简单入门/">Grand Central Dispatch(GCD)简单入门</a></h1><div class="post-meta">2016-10-12</div><a data-thread-key="2016/10/12/Grand-Central-Dispatch-GCD-简单入门/" href="/2016/10/12/Grand-Central-Dispatch-GCD-简单入门/#comments" class="ds-thread-count"></a><div class="post-content"><h2 id="GCD"><a href="#GCD" class="headerlink" title="GCD"></a>GCD</h2><p>GCD是从OS X Snow Leopard 和iOS 4开始引入的多线程编程技术<br>开发者只需要定义想执行的任务并追加到适当的调度队列中，GCD就能生成必要的线程并计划执行任务</p>
+<h3 id="调度队列-Dispatch-Queue"><a href="#调度队列-Dispatch-Queue" class="headerlink" title="调度队列(Dispatch Queue)"></a>调度队列(Dispatch Queue)</h3><ul>
+<li>串行队列(Serial Dispatch Queue): 等待现在执行中处理结束。</li>
+<li>并发队列(Concurrent Dispatch Queue): 不等待现在执行中处理结束。</li>
+</ul></div><p class="readmore"><a href="/2016/10/12/Grand-Central-Dispatch-GCD-简单入门/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2016/10/10/凝视/">凝视</a></h1><div class="post-meta">2016-10-10</div><a data-thread-key="2016/10/10/凝视/" href="/2016/10/10/凝视/#comments" class="ds-thread-count"></a><div class="post-content"><p>(顾城)</p>
+<p>世界在喧闹中逝去</p>
+<p>你凝视着什么</p>
+<p>在那睫影的掩盖下</p>
+<p>我发现了我</p></div><p class="readmore"><a href="/2016/10/10/凝视/">阅读更多</a></p></div><nav class="page-navigator"><span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">下一页</a></nav></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" class="search-form"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://songyiting.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/swift/">swift</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/图像处理/">图像处理</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/诗和远方/">诗和远方</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/05/11/自定义手势/">自定义手势</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/08/iOS设计模式之工厂方法/">iOS设计模式之工厂方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/08/iOS设计模式之单例/">iOS设计模式之单例</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/08/雨巷/">雨巷</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/03/29/iOS屏幕分辨率问题/">iOS屏幕分辨率问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/03/29/错误/">错误</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/03/29/OpenCV基础篇/">OpenCV基础篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/03/27/我和小鸟和铃铛/">我和小鸟和铃铛</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/12/Grand-Central-Dispatch-GCD-简单入门/">Grand Central Dispatch(GCD)简单入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/凝视/">凝视</a></li></ul></div><div class="widget"><div class="comments-title"><i class="fa fa-comment-o"> 最近评论</i></div><div data-num-items="5" data-show-avatars="0" data-show-time="1" data-show-admin="0" data-excerpt-length="32" data-show-title="1" class="ds-recent-comments"></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">© <a href="/." rel="nofollow">SongYiTing.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.css?v=0.0.0"><script>var duoshuoQuery = {short_name:'宋一听'};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?a66d7839ff74fc93bcc5b00912145f14## Your Baidu Analytics tracking id, e.g. 8006843039519956000";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

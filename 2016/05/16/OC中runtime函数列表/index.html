@@ -1,0 +1,112 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>OC中的runtime | SongYiTing</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">OC中的runtime</h1><a id="logo" href="/.">SongYiTing</a><p class="description"></p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 主页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">OC中的runtime</h1><div class="post-meta">May 16, 2016<span> | </span><span class="category"><a href="/categories/iOS/">iOS</a></span><script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> Hits</span></span></div><a data-thread-key="2016/05/16/OC中runtime函数列表/" href="/2016/05/16/OC中runtime函数列表/#comments" class="ds-thread-count"></a><div class="post-content"><p><b>obj_msgSend函数的调用过程:</b><br><img src="/img/runtimeImages/objc_msgSend调用.png" alt=""></p>
+<a id="more"></a>
+<p><b>OC消息动态解析图:</b><br><img src="/img/runtimeImages/消息动态解析.png" alt=""></p>
+<p><b>下图是自己瞎画的一张:</b><br><img src="/img/runtimeImages/runtime.png" alt=""></p>
+<!-- ## 函数
+### - 类
+    const char * class_getName(Class cls)
+    Class class_getSuperclass(Class cls)
+    Class class_setSuperclass(Class cls, Class newSuper)
+    Bool class_isMetaClass(Class cls)
+    BOOL class_respondsToSeletor(Class cls, SEL sel)
+    int class_getVersion(Class theClass)
+    void class_setVersion(Class theClass, int version)
+
+### - 实例变量，类变量
+    size_t class_getInstanceSize(Class cls)
+    Ivar class_getInstanceVariable(Class cls, const char* name)
+    Ivar class_getClassVariable(Class cls, const char* name)
+    //向一个类中加入实例变量，只能在objc_allocateClassPair和objc_registerClassPair之间调用
+    BOOL class_addIvar(Class cls, const char *name, size_t size, uint8_t alignment, const char *types)
+    Ivar* class_copyIvarList(Class cls, unsigned int *outCount)   //需要free().
+    const char *class_getIvarLayout(Class cls)
+    void class_setIvarLayout(Class cls, const char *layout)
+    const char *class_getWeakIvarLayout(Class cls)
+    void class_setWeakIvarLayout(Class cls, const char *layout)
+
+### - 属性
+    objc_property_t class_getProperty(Class cls, const char *name)
+    objc_property_t * class_copyPropertyList(Class cls, unsigned int *outCount)  //must free()
+    BOOL class_addProperty(Class cls, const char* name, const objc_property_atrribute_t *attribute, unsigned int atrributeCount)
+    void class_replaceProperty(Class cls, const char *name, const objc_property_atrribute_t *attributes, unsigned int attributeCount)
+
+
+### - 方法
+    //types参数：An array of characters that describe the types of the arguments to the method
+    BOOL class_addMethod(Class cls, SEL name, IMP imp, const char *types) 
+    Method class_getInstanceMethod(Class aClass, SEL aSelector)
+    Method class_getClassMethod(Class aClass, SEL aSelecotr)
+    Method *class_copyMethodList(Class cls, unsigned int *outCount)
+    IMP class_replaceMethod(Class cls, SEL name, IMP imp, const char* types)
+    IMP class_getMethodImplementation(Class cls, SEL name)
+    IMP class_getMethodImplementation_strt(Class cls, SEL name)
+
+
+### － 协议
+    BOOL class_conformsToProtocol(Class cls, Protocol *protocol)
+    BOOL class_addProtocol(Class cls, Protocol *protocol)
+    Protocol ** class_copyProtocolList(Class cls, unsigned int *outCount)     //must free()
+
+### － CoreFoundation's toll-free bridging.
+    //Do not call this function yourself
+    Class objc_getFutureClass(const char *name)
+    void objc_setFutureClass(Class cls, const char *name)
+
+
+### － Adding Classes
+    //创建一个class和metaclass
+    obj_allocateClassPair(Class superclass, const char *name, size_t extraBytes)
+    //销毁类和元类
+    void objc_disposeClassPair(Class cls)
+    void objc_registerClassPair(Class cls)
+    //Create an instance of a class
+    id class_createInstance(Class cls, size_t extraBytes)
+    //Create an instance of a class at the specified location.
+    //Destroys an instance of a class without freeing memory and removes any of its associated references.
+    id objc_constructInstance(Class cls, void *bytes)
+    void objc_destructInstance(id obj)
+
+
+### － 对象
+
+    id object_copy(id obj, size_t size)
+    id object_dispose(id obj)
+    Ivar object_setInstanceVariable(id obj, const char *name, void *value)
+    Ivar object_getInstanceVariable(id obj, const char *name, void **outValue)
+    //Returns a pointer to any extra bytes allocated with a instance given object.
+    OBJC_EXPORT void *object_getIndexedIvars(id obj)
+    //读取实例变量的值
+    id object_getIvar(id object, Ivar ivar)
+    void object_setIVar(id object, Ivar ivar, id value)
+    Class object_getClassName(id obj)
+    Class object_setClass(id object, Class cls)
+
+### - 类定义
+    //从一组类中拿到已注册的类的数量
+    int objc_getClassList(Class *buffer, int bufferLen)
+    Class *objc_copyClassList(unsigned int *outCount)
+    //返回类，如果类没有被注册则返回nil,not call the class handler callback
+    id objc_lookUpClass(const char *name)
+    //calls the class handler callback
+    id objc_getClass(const char *name)
+    //This function is the same as objc_getClass, but kills the process if the class is not found.
+    id objc_getRequiredClass(const char *name)
+    id objc_getMetaClass(const char *name)
+### － Working with Instance Variables
+ --></div><div class="tags"></div><div class="post-nav"><a href="/2016/05/17/iOS持久化本地存储/" class="pre">iOS持久化本地存储</a><a href="/2016/04/15/vim使用整理/" class="next">vim使用整理</a></div><div data-thread-key="2016/05/16/OC中runtime函数列表/" data-title="OC中的runtime" data-url="http://songyiting.com/2016/05/16/OC中runtime函数列表/" class="ds-share flat"><div class="ds-share-inline"><ul class="ds-share-icons-16"><li data-toggle="ds-share-icons-more"><a href="javascript:void(0);" class="ds-more">分享到：</a></li><li><a href="javascript:void(0);" data-service="weibo" class="ds-weibo">微博</a></li><li><a href="javascript:void(0);" data-service="qzone" class="ds-qzone">QQ空间</a></li><li><a href="javascript:void(0);" data-service="qqt" class="ds-qqt">腾讯微博</a></li><li><a href="javascript:void(0);" data-service="wechat" class="ds-wechat">微信</a></li></ul><div class="ds-share-icons-more"></div></div></div><div data-thread-key="2016/05/16/OC中runtime函数列表/" data-title="OC中的runtime" data-url="http://songyiting.com/2016/05/16/OC中runtime函数列表/" data-author-key="1" class="ds-thread"></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" class="search-form"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://songyiting.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/swift/">swift</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/图像处理/">图像处理</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/诗和远方/">诗和远方</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/05/11/自定义手势/">自定义手势</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/08/iOS设计模式之工厂方法/">iOS设计模式之工厂方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/08/iOS设计模式之单例/">iOS设计模式之单例</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/08/雨巷/">雨巷</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/03/29/iOS屏幕分辨率问题/">iOS屏幕分辨率问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/03/29/错误/">错误</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/03/29/OpenCV基础篇/">OpenCV基础篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/03/27/我和小鸟和铃铛/">我和小鸟和铃铛</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/12/Grand-Central-Dispatch-GCD-简单入门/">Grand Central Dispatch(GCD)简单入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/凝视/">凝视</a></li></ul></div><div class="widget"><div class="comments-title"><i class="fa fa-comment-o"> 最近评论</i></div><div data-num-items="5" data-show-avatars="0" data-show-time="1" data-show-admin="0" data-excerpt-length="32" data-show-title="1" class="ds-recent-comments"></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">© <a href="/." rel="nofollow">SongYiTing.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.css?v=0.0.0"><script>var duoshuoQuery = {short_name:'宋一听'};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?a66d7839ff74fc93bcc5b00912145f14## Your Baidu Analytics tracking id, e.g. 8006843039519956000";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

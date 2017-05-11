@@ -1,0 +1,106 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Event Handing Guide for iOS(三) | SongYiTing</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Event Handing Guide for iOS(三)</h1><a id="logo" href="/.">SongYiTing</a><p class="description"></p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 主页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Event Handing Guide for iOS(三)</h1><div class="post-meta">Aug 9, 2016<span> | </span><span class="category"><a href="/categories/iOS/">iOS</a></span><script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> Hits</span></span></div><a data-thread-key="2016/08/09/Event-Handing-Guide-for-iOS-三/" href="/2016/08/09/Event-Handing-Guide-for-iOS-三/#comments" class="ds-thread-count"></a><div class="post-content"><blockquote>
+<p>原文:<a href="https://developer.apple.com/library/ios/documentation/EventHandling/Conceptual/EventHandlingiPhoneOS/event_delivery_responder_chain/event_delivery_responder_chain.html#//apple_ref/doc/uid/TP40009541-CH4-SW2" target="_blank" rel="external">Event Delivery: The Responder Chain</a> </p>
+</blockquote>
+<h1 id="事件传递：响应者链"><a href="#事件传递：响应者链" class="headerlink" title="事件传递：响应者链"></a>事件传递：响应者链</h1><p>当你设计应用时，你可能希望动态的响应事件。例如，触摸可能发生在屏幕上的很多不同对象上，你必须决定你希望哪一个对象来响应给定的事件，理解对象是如何接收事件的。</p>
+<p>当用户产生的事件发生时，UIKit创建一个包含了需要处理该事件的信息的事件对象。然后将该事件对象放在 <span>active app’s</span> (Application object)事件队列中。对于触摸事件来说，该对象是封装在 <span class="sclKeyWord">UIEvent</span> 对象中的一组touch。对于运动事件来说，事件对象不一样，取决于你使用哪种框架，以及哪种类型的运动事件。</p>
+<a id="more"></a>
+<p>一个事件沿着特定的路径传递，直到它被传递给了会处理它的对象。首先，<span class="sclKeyWord">singleton UIApplication</span> 对象从队列的顶部获取一个事件，并且向下分派。典型的，它将事件发送给应用的主 <span class="sclKeyWord">window object</span> ，key window对象将事件传递给initial(最初的)对象来处理。initial对象取决于事件的类型。</p>
+<ul>
+<li><b>Touch event.</b> 对于触摸事件来说，window对象先尝试将事件传递给触碰的view。那个view被称为hit-test view。找到hit-test view的过程叫做<i>hit-testing</i>，hit-test在 <span class="sclKeyWord">Hit-Testing Returns the View Where a Touch Occurred.</span> 有描述。</li>
+<li><b>Motion and remote control events.</b> 这些事件，window对象给第一响应者发送摇晃运动或者远程控制事件来处理。第一响应者在 <span class="sclKeyWord">The Responder Chain Is Made Up of Responder Objects</span> 中描述。</li>
+</ul>
+<p>这些事件路径的终极目标是找到一个可以处理、响应事件的对象。因此，UIKit会先将事件发送给最适合处理该事件的对象。对于touch事件，是hit-test view，而其他事件，则是第一响应者。以下的章节更详细的解释了hit-test view和第一响应着是如何被确定的。</p>
+<h2 id="Hit-Testing-返回触碰的view"><a href="#Hit-Testing-返回触碰的view" class="headerlink" title="Hit-Testing 返回触碰的view"></a>Hit-Testing 返回触碰的view</h2><p>iOS使用hit-testing来找到触碰的view。Hit-testing潜心于检查是否touch在相关的view对象的边界内。如果是，它会递归的检查那个view的所有子view。在包含触摸点的视图层次中的最底层的view成为hit-test view。iOS确定hit-test view之后，会将touch事件传递给那个view,让它来处理事件。</p>
+<p>为了说明,假设用户触摸了图2-1中的view E。iOS以下面的顺序通过检查子视图来找到hit-test view。</p>
+<ol>
+<li>touch在view A的边界内，所以会检查子视图B和C。</li>
+<li>touch不在view B的边界内，但是在view C的边界内，所以它会检查子视图D和E。</li>
+<li>touch不在view D的边界内，但是在view E的边界内。<br>View E是包含touch的视图层次中最底层的view，所以它成为了hit-test view。</li>
+</ol>
+<p><img src="/img/EHG3/01.png" alt=""></p>
+<p><span class="sclKeyWord">hitTest:withEvent:</span> 方法为指定的 <span class="sclKeyWord">CGPoint</span> 和 <span>UIEvent</span> 返回hit test view。hitTest:withEvent方法先调用pointInside:withEvent:方法。如果传递给hitTest:withEvent:的point是在view边界内，pointInside:withEvent:方法返回YES。然后，该方法会在每一个返回YES的子视图上递归的调用hitTest:withEvent:方法。</p>
+<p>如果传给hitTest:withEvent:的point并不在view的边界内，pointInside:withEvent:方法返回NO，该point被忽略，hitTest:withEvent:返回nil。如果一个子view返回NO,则该view层次的整个分支被忽略，因为如果touch不是发生在那个子view上，它也不会是发生在那个子view的任何子视图上。那意味着，在父视图之外的子视图上的任何点不能接收到touch事件，因为touch point必须在父视图和子视图的边界之内。如果subview的 <span class="sclKeyWord">clipsToBounds</span> 设置为NO，这是可能发生的。</p>
+<p style="border: 1px solid #6684a0; padding: 5px"><b>注意:</b> touch对象在整个生命周期内都被关联到它的hit-test view上，即使touch之后移动到了view之外。</p>
+
+<p>hit-test view有优先处理touch事件的机会。如果hit-test view不能处理事件，事件会沿着视图的响应者链（在 <span class="sclKeyWord">The Responder Chain Is Made Up of Responder Objects</span> 中有描述）被传递，直到系统找到可以处理touch事件的对象。</p>
+<h2 id="响应者链由响应者对象组成"><a href="#响应者链由响应者对象组成" class="headerlink" title="响应者链由响应者对象组成"></a>响应者链由响应者对象组成</h2><p>许多类型的事件依靠响应者链来进行事件传递。响应者链是一系列连接的响应者对象。以第一个响应者开始，application对象结束。如果第一个响应者不能处理事件，它会将事件传递给响应者链中的下一个响应者。</p>
+<p><i>responder object</i> 是一个可以响应并处理事件的对象。 <span class="sclKeyWord">UIResponder</span>  类是所有响应者对象的基类，它不仅为事件处理定义了编程接口，也为常见的响应者行为定义了编程接口。UIApplication,UIViewController,和UIView的实例都是响应者，这意味着所有的视图和大多数的主控制器对象都是响应者。注意Core Animation layers不是响应者。</p>
+<p><i>first responder</i> 首先接收事件。通常，第一响应者是一个view对象。一个对象可以通过以下两件事成为第一响应者</p>
+<ol>
+<li>覆盖<span class="sclKeyWord">canBecomeFirstResponder</span> 方法，使其返回YES。</li>
+<li>收到<span class="sclKeyWord">becomeFirstResponder</span> 消息。如果有必要，对象可以给自己发送该消息。</li>
+</ol>
+<p style="border: 1px solid #6684a0;padding: 5px;">注意:确保在你让对象成为第一响应者之前你的程序已经建立了对象的图。例如，你通常在你覆盖的 <span class="sclKeyWord">viewDidApper:</span> 方法中调用 <span class="sclKeyWord">becomeFirstResponder</span> 方法。如果你尝试在 <span class="sclKeyWord">viewWillAppear:</span> 赋值第一响应者，对象图尚未建立，那么becomeFirstResponder方法会返回NO。<br></p>
+
+<p><span class="sclKeyWord">Events</span> 不是唯一的依靠响应者链的对象。响应者链被用在:</p>
+<ul>
+<li><b>Touche events.</b> 如果hit-test视图不能处理touch事件，事件沿着以hit-test view开始的响应者链被传递。</li>
+<li><b>Motion events.</b> 处理摇晃事件，第一响应者必须实现UIResponder类的 <span class="sclKeyWord">motionBegan:withEvent: </span> 和<span class="sclKeyWord">motionEnded:withEvent:</span> 方法，在 <span class="sclKeyWord">Detecting Shake-Motion Events with UIEvent</span> 中描述。</li>
+<li><b>Remote control events.</b> 处理远程控制事件，第一响应者必须实现UIResponder类的 <span class="sclKeyWord">remotecontrolReceivedWithEvent:</span> 方法。</li>
+<li><b>Action messages.</b> 当用户操作一个control时，比如一个button或switch,action方法的target是nil,消息会通过以第一响应者(可能是控件本身）开始的响应者链被发送。</li>
+<li><b>Editing-munu messages.</b> 当用户点击编辑菜单命令的时候，iOS使用响应者链找到实现了必要方法(如cut:,copy:,paste:)的对象。更多信息，请看 <span class="sclKeyWord">Displaying and Managing the Edit Menu</span> 以及示例代码工程, <i>CopyPasteTile.</i></li>
+<li><b>Text editing.</b> 当用户点击一个text field或者text view时，该view会自动变成第一响应者。默认情况下，虚拟键盘出现，text field或text view变成编辑状态。你可以显示一个自定义的输入view来代替键盘，如果这样对你的应用是合适的。你可以为任何的响应者对象加入一个自定义的输入view。更多信息，请看 <span class="sclKeyWord">Custom Views for Data input</span> 。</li>
+</ul>
+<p>UIKit自动将用户点击的text field或text view变成第一响应者;应用必须显式的使用becomFirstResponder方法来设置所有其他的对象。</p>
+<h2 id="响应者链按照特定的传递路径"><a href="#响应者链按照特定的传递路径" class="headerlink" title="响应者链按照特定的传递路径"></a>响应者链按照特定的传递路径</h2><p>如果initial对象 - hit-test view或第一响应者 - 不处理事件，UIKit传递事件给链中的下一个响应者。每一个响应者对象自己决定是否想要处理事件，或者是通过 <span class="sclKeyWord">nextResponder</span> 方法将事件向下一个响应者传递。这个过程继续，直到有响应者处理了事件，或者没有响应者了。</p>
+<p>当iOS检测到事件，并将它传递给initial对象(通常时是view)时，响应者链序列开始。initial view有处理事件的第一个机会。图2-2展示了两个应用配置各自的事件传递路径。一个应用的事件传递路径依靠它的具体结构，但是所有的事件传递路径都是同样的启发法。</p>
+<p><img src="/img/EHG3/02.png" alt=""></p>
+<p>左面的应用，事件沿着以下路径传递：</p>
+<ol>
+<li><b>initial View</b> 试图处理事件或消息。如果它不能处理这个事件，它将事件传递给父视图，因为initial view不是它的视图控制器的视图层次中最顶层的view。</li>
+<li><b>superview</b> 试图处理事件。如果父视图不能处理这个事件，它会将事件传递给父视图，因为它仍然不是视图层中的最顶层view。</li>
+<li>在视图控制器的视图层次中的 <b> topmost view</b> 试图处理该事件。如果最顶层view不能处理事件，它将事件传递给它的view controller。</li>
+<li><b>view controller</b> 试图处理事件，如果不能处理的话，会将事件传递给window。</li>
+<li>如果 <b>window object</b> 仍然不能处理事件，它会将事件传递给 <span class="sclKeyWord">singleton app object</span>。</li>
+<li>如果 <b>app object</b> 不能处理事件，则它会废弃事件。</li>
+</ol>
+<p>右边的应用按照稍微不同的路径，但是所有的事件传递路径安装这些启发法:</p>
+<ol>
+<li>view沿着它的视图控制器的视图层次向上传递event,直到最顶层视图。</li>
+<li>topmost视图将事件传递给它的view controller.</li>
+<li>view controller将事件传递给它的最顶层view的父视图。<br> 重复1-3步，直到事件到达root view controller.</li>
+<li>root view controller将事件传递给window对象。</li>
+<li>window将事件传递给app对象。</li>
+</ol>
+<p style="border: 1px solid #6684a0; padding: 5px;"><b>重要:</b> 如果你实现了一个自定义的view来处理远程控制事件，action消息，shake-motion事件，或者editing-menu消息，不要直接使用 <span class="sclKeyWord">nextResponder</span> 来向上发送event或message。代替的，调用当前event handing method的父类实现，让UIKit来为你处理响应者链的遍历。<br></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div><div class="tags"></div><div class="post-nav"><a href="/2016/08/12/Event-Handling-Guide-for-iOS-五/" class="pre">Event Handling Guide for iOS(五)</a><a href="/2016/07/30/Event-Handing-Guide-for-iOS-一/" class="next">Event Handling Guide for iOS(一)</a></div><div data-thread-key="2016/08/09/Event-Handing-Guide-for-iOS-三/" data-title="Event Handing Guide for iOS(三)" data-url="http://songyiting.com/2016/08/09/Event-Handing-Guide-for-iOS-三/" class="ds-share flat"><div class="ds-share-inline"><ul class="ds-share-icons-16"><li data-toggle="ds-share-icons-more"><a href="javascript:void(0);" class="ds-more">分享到：</a></li><li><a href="javascript:void(0);" data-service="weibo" class="ds-weibo">微博</a></li><li><a href="javascript:void(0);" data-service="qzone" class="ds-qzone">QQ空间</a></li><li><a href="javascript:void(0);" data-service="qqt" class="ds-qqt">腾讯微博</a></li><li><a href="javascript:void(0);" data-service="wechat" class="ds-wechat">微信</a></li></ul><div class="ds-share-icons-more"></div></div></div><div data-thread-key="2016/08/09/Event-Handing-Guide-for-iOS-三/" data-title="Event Handing Guide for iOS(三)" data-url="http://songyiting.com/2016/08/09/Event-Handing-Guide-for-iOS-三/" data-author-key="1" class="ds-thread"></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" class="search-form"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://songyiting.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/iOS/">iOS</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/swift/">swift</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/图像处理/">图像处理</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/诗和远方/">诗和远方</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/05/11/自定义手势/">自定义手势</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/08/iOS设计模式之工厂方法/">iOS设计模式之工厂方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/08/iOS设计模式之单例/">iOS设计模式之单例</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/08/雨巷/">雨巷</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/03/29/iOS屏幕分辨率问题/">iOS屏幕分辨率问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/03/29/错误/">错误</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/03/29/OpenCV基础篇/">OpenCV基础篇</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/03/27/我和小鸟和铃铛/">我和小鸟和铃铛</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/12/Grand-Central-Dispatch-GCD-简单入门/">Grand Central Dispatch(GCD)简单入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/10/10/凝视/">凝视</a></li></ul></div><div class="widget"><div class="comments-title"><i class="fa fa-comment-o"> 最近评论</i></div><div data-num-items="5" data-show-avatars="0" data-show-time="1" data-show-admin="0" data-excerpt-length="32" data-show-title="1" class="ds-recent-comments"></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">© <a href="/." rel="nofollow">SongYiTing.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.css?v=0.0.0"><script>var duoshuoQuery = {short_name:'宋一听'};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?a66d7839ff74fc93bcc5b00912145f14## Your Baidu Analytics tracking id, e.g. 8006843039519956000";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
